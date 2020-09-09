@@ -210,7 +210,7 @@ def eeschema_plot_schematic(output_dir, output_file, all_pages, pid, ext):
     exit_eeschema()
 
 
-def eeschema_parse_erc(erc_file, warning_as_error=False):
+def eeschema_parse_erc(erc_file):
     with open(erc_file, 'r') as f:
         lines = f.read().splitlines()
         last_line = lines[-1]
@@ -245,8 +245,6 @@ def eeschema_parse_erc(erc_file, warning_as_error=False):
     errors = m.group(2)
     warnings = m.group(3)
 
-    if warning_as_error:
-        return int(errors) + int(warnings), 0
     return int(errors), int(warnings)
 
 
@@ -572,7 +570,7 @@ if __name__ == '__main__':
             elif args.command == 'run_erc':
                 # Run ERC
                 erc_file = eeschema_run_erc_schematic(output_file_no_ext, eeschema_proc.pid)
-                errors, warnings = eeschema_parse_erc(erc_file, args.warnings_as_errors)
+                errors, warnings = eeschema_parse_erc(erc_file)
                 skip_err, skip_wrn = apply_filters('ERC error/s', 'ERC warning/s')
                 errors = errors-skip_err
                 warnings = warnings-skip_wrn
@@ -587,6 +585,8 @@ if __name__ == '__main__':
                         if err:
                             logger.error(err)
                     exit(-errors)
+                if args.warnings_as_errors:
+                    exit(-(errors+warnings))
                 logger.info('No errors')
             eeschema_proc.terminate()
     # The following code is here only to make coverage tool properly meassure atexit code.
