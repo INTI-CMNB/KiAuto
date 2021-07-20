@@ -26,7 +26,7 @@ from kiauto import log
 logger = log.get_logger(__name__)
 
 
-def wait_for_file_created_by_process(pid, file, timeout=15):
+def wait_for_file_created_by_process(pid, file, timeout=150):
     process = psutil.Process(pid)
 
     DELAY = 0.2
