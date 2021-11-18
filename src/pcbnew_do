@@ -461,9 +461,11 @@ def capture_3d_view(cfg):
         if zoom < 0:
             zoom = -zoom
             zoom_b = '5'
+        sequence=[]
         for _ in range(zoom):
-            xdotool(['click', zoom_b])
-            wait_3d_ready()
+            sequence.extend(['click',zoom_b])
+        xdotool(sequence)
+        wait_3d_ready()
 
     if cfg.ray_tracing:
         # I can't find a mechanism to determine if the render finished.
