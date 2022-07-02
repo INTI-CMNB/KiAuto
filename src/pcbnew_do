@@ -412,13 +412,13 @@ def run_drc_6_0(cfg):
     # To know when KiCad finished we try this:
     # - Currently I can see a way, just wait some time
     #
-    sleep(12*cfg.time_out_scale)
+    sleep(25*cfg.time_out_scale)
     # Save the DRC
     logger.info('Open the save dialog')
     wait_point(cfg)
     logger.info('Save DRC')
     wait_point(cfg)
-    xdotool(['key', 'shift+Tab', 'shift+Tab', 'shift+Tab', 'shift+Tab', 'shift+Tab', 'Return'])
+    xdotool(['key', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Tab', 'Return'])
     # Wait for the save dialog
     wait_for_window('DRC File save dialog', 'Save Report to File')
     # Paste the name
@@ -1183,7 +1183,8 @@ if __name__ == '__main__':
     # Do all the work
     #
     error_level = 0
-    if args.command == 'run_drc' and not cfg.ki5:
+    kicad_bug_11562_fixed = False # As of 6.0.6-0, Python API doesn't handle excluded DRC violations correctly.
+    if args.command == 'run_drc' and not cfg.ki5 and kicad_bug_11562_fixed:
         # First command to migrate to Python!
         run_drc_python(cfg)
         error_level = process_drc_out(cfg)
