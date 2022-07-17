@@ -44,13 +44,14 @@ from kiauto.file_util import (load_filters, wait_for_file_created_by_process, ap
                               check_input_file, memorize_project, restore_project, get_log_files, create_kicad_config)
 from kiauto.file_util import set_time_out_scale as set_time_out_scale_f
 from kiauto.misc import (REC_W, REC_H, __version__, NO_PCB, PCBNEW_CFG_PRESENT, WAIT_START, WRONG_LAYER_NAME,
-                         WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, USER_HOTKEYS_PRESENT,
+                         WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, KICAD_VERSION_5_99, USER_HOTKEYS_PRESENT,
                          CORRUPTED_PCB, __copyright__, __license__, TIME_OUT_MULT, get_en_locale, KICAD_CFG_PRESENT,
                          MISSING_TOOL)
 from kiauto.ui_automation import (PopenContext, xdotool, wait_not_focused, wait_for_window, recorded_xvfb,
                                   wait_point, text_replace, set_time_out_scale, open_dialog_with_retry)
 
 TITLE_CONFIRMATION = '^Confirmation$'
+TITLE_FILE_OPEN_ERROR = '^File Open Error$'
 TITLE_ERROR = '^Error$'
 TITLE_WARNING = '^Warning$'
 # This is very Debian specific, you need to install `gdb` and the kicad-nightly-dbg package
@@ -160,16 +161,23 @@ def parse_drc(cfg):
 
 
 def dismiss_already_running():
-    # The "Confirmation" modal pops up if pcbnew is already running
-    nf_title = TITLE_CONFIRMATION
+    # "File Open Error" or "Confirmation" modal pops up if pcbnew is already running
+    if cfg.kicad_version >= KICAD_VERSION_5_99:
+        nf_title = TITLE_FILE_OPEN_ERROR
+    else:
+        nf_title = TITLE_CONFIRMATION
     wait_for_window(nf_title, nf_title, 1)
 
     logger.info('Dismiss pcbnew already running')
     xdotool(['search', '--onlyvisible', '--name', nf_title, 'windowfocus'])
+    if cfg.kicad_version >= KICAD_VERSION_5_99:
+        logger.debug('Found, sending Left')
+        xdotool(['key', 'Left'])
     logger.debug('Found, sending Return')
     xdotool(['key', 'Return'])
-    logger.debug('Wait a little, this dialog is slow')
-    sleep(5)
+    if cfg.kicad_version <  KICAD_VERSION_5_99:
+        logger.debug('Wait a little, this dialog is slow')
+        sleep(5)
 
 
 def dismiss_warning():  # pragma: no cover
@@ -199,7 +207,8 @@ def wait_pcbew_start(cfg):
     failed_focuse = False
     other = None
     try:
-        id = wait_pcbnew(args.wait_start, [TITLE_CONFIRMATION, TITLE_WARNING, TITLE_ERROR], cfg.popen_obj)
+        wait_title = [TITLE_CONFIRMATION, TITLE_FILE_OPEN_ERROR, TITLE_WARNING, TITLE_ERROR]
+        id = wait_pcbnew(args.wait_start, wait_title, cfg.popen_obj)
     except RuntimeError:  # pragma: no cover
         logger.debug('Time-out waiting for pcbnew, will retry')
         failed_focuse = True
@@ -216,7 +225,7 @@ def wait_pcbew_start(cfg):
             dismiss_error()
             logger.error('pcbnew reported an error')
             exit(PCBNEW_ERROR)
-        if other == TITLE_CONFIRMATION:
+        if other == TITLE_CONFIRMATION or other == TITLE_FILE_OPEN_ERROR:
             dismiss_already_running()
         if other == TITLE_WARNING:  # pragma: no cover
             dismiss_warning()
@@ -931,7 +940,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='KiCad PCB automation')
     subparsers = parser.add_subparsers(help='Command:', dest='command')
 
-    # short commands: rmsvVw
+    # short commands: rmsvVwb
     parser.add_argument('--record', '-r', help='Record the UI automation', action='store_true')
     parser.add_argument('--rec_width', help='Record width ['+str(REC_W)+']', type=int, default=REC_W)
     parser.add_argument('--rec_height', help='Record height ['+str(REC_H)+']', type=int, default=REC_H)
@@ -944,6 +953,7 @@ if __name__ == '__main__':
     parser.add_argument('--wait_start', help='Timeout to pcbnew start ['+str(WAIT_START)+']', type=int, default=WAIT_START)
     parser.add_argument('--time_out_scale', help='Timeout multiplier, affects most timeouts',
                         type=float, default=TIME_OUT_MULT)
+    parser.add_argument('--backed_up', '-b', help='Config files are backded up', action='store_true')
 
     # short commands: cflmMopsStv
     export_parser = subparsers.add_parser('export', help='Export PCB layers')
@@ -1031,6 +1041,11 @@ if __name__ == '__main__':
     ipc_netlist_parser.add_argument('output_dir', help='Output directory')
     ipc_netlist_parser.add_argument('--output_name', '-o', nargs=1, help='Name of the output file', default=['pcb.d356'])
 
+    # short commands: br
+    config_parser = subparsers.add_parser('config', help='Perform config operations')
+    config_parser.add_argument('--backups', '-b', help='Back up the config file', action='store_true')
+    config_parser.add_argument('--restore', '-r', help='Restore the config file', action='store_true')
+
     args = parser.parse_args()
     # Set the specified verbosity
     log.set_level(logger, args.verbose)
@@ -1039,6 +1054,9 @@ if __name__ == '__main__':
         logger.error('No command selected')
         parser.print_help()
         exit(WRONG_ARGUMENTS)
+    elif args.command == 'config':
+        args.kicad_pcb_file = None
+        args.output_dir = None
 
     cfg = Config(logger, args.kicad_pcb_file, args)
     set_time_out_scale(cfg.time_out_scale)
@@ -1065,8 +1083,9 @@ if __name__ == '__main__':
         os.environ['MESA_LOG_FILE'] = "/tmp/mesa.log"
         os.environ['MESA_NO_ERROR'] = "1"
     # Make sure the input file exists and has an extension
-    check_input_file(cfg, NO_PCB, WRONG_PCB_NAME)
-    cfg.board = load_pcb(cfg.input_file)
+    if args.command != 'config':
+        check_input_file(cfg, NO_PCB, WRONG_PCB_NAME)
+        cfg.board = load_pcb(cfg.input_file)
     if not cfg.save and args.command in ['run_drc', 'export']:
         memorize_pcb(cfg)
 
@@ -1145,7 +1164,16 @@ if __name__ == '__main__':
     if args.command == 'run_drc' and args.errors_filter:
         load_filters(cfg, args.errors_filter[0])
 
-    memorize_project(cfg)
+    if args.command != 'config':
+        memorize_project(cfg)
+
+    # Perform config operation
+    if args.command != 'config' and args.backed_up:
+        cfg.conf_require_backups = False
+        cfg.conf_require_restore = False
+    if args.command == 'config':
+        cfg.conf_require_backups = args.backups
+        cfg.conf_require_restore = args.restore
     # Back-up the current pcbnew configuration
     check_kicad_config_dir(cfg)
     cfg.conf_pcbnew_bkp = backup_config('PCBnew', cfg.conf_pcbnew, PCBNEW_CFG_PRESENT, cfg)
@@ -1154,18 +1182,25 @@ if __name__ == '__main__':
     if cfg.conf_3dview:
         cfg.conf_3dview_bkp = backup_config('3D Viewer', cfg.conf_3dview, PCBNEW_CFG_PRESENT, cfg)
     # Create a suitable configuration
-    create_pcbnew_config(cfg)
+    if args.command != 'config':
+        create_pcbnew_config(cfg)
     # Hotkeys
     if not cfg.ki5:
         # KiCad 6 breaks menu short-cuts, but we can configure user hotkeys
         # Back-up the current user.hotkeys configuration
         cfg.conf_hotkeys_bkp = backup_config('User hotkeys', cfg.conf_hotkeys, USER_HOTKEYS_PRESENT, cfg)
         # Create a suitable configuration
-        create_user_hotkeys(cfg)
+        if args.command != 'config':
+            create_user_hotkeys(cfg)
     # Back-up the current kicad_common configuration
     cfg.conf_kicad_bkp = backup_config('KiCad common', cfg.conf_kicad, KICAD_CFG_PRESENT, cfg)
     # Create a suitable configuration
-    create_kicad_config(cfg)
+    if args.command != 'config':
+        create_kicad_config(cfg)
+    # Early exit for config operation
+    if args.command == 'config':
+        exit(os.EX_OK)
+
     # Make sure the user has fp-lib-table
     check_lib_table(cfg.user_fp_lib_table, cfg.sys_fp_lib_table)
     # Create output dir, compute full name for output file and remove it
@@ -1238,8 +1273,9 @@ if __name__ == '__main__':
     if not cfg.save and args.command in ['run_drc', 'export']:
         atexit.unregister(restore_pcb)
         restore_pcb(cfg)
-    atexit.unregister(restore_config)
-    restore_config(cfg)
+    if cfg.conf_require_restore:
+        atexit.unregister(restore_config)
+        restore_config(cfg)
     atexit.unregister(restore_project)
     restore_project(cfg)
     exit(error_level)

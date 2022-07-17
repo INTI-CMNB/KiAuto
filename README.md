@@ -197,6 +197,20 @@ If you need to get a list of valid layers run:
 pcbnew_do export --list YOUR_PCB.kicad_pcb
 ```
 
+If you would like to export PDFs containing different layers in parallel to fully utilize multi-core CPUs:
+
+```
+pcbnew_do config -b
+while ...; do
+    pcbnew_do -b export YOUR_PCB.kicad_pcb DESTINATION/ LAYERs... & # background process
+    sleep $delay # ensure configs are loaded before the next launch
+done
+wait
+pcbnew_do config -r
+```
+
+This will run multiple instances in parallel with quite little overhead for ensuring configs are loaded, and wait until all export processes are exited. Then, restore the configs with the ones that are backed up in the beginning.
+
 ### Refilling copper zones
 
 When you run the DRC KiCad will refill all zones. If you didn't do it before saving it could lead to a situation where the PCB that passes DRC isn't the one saved to disk. To solve you can use *-s* option to save the PCB after DRC:

@@ -175,6 +175,8 @@ class Config(object):
                 # https://forum.kicad.info/t/kicad-config-home-inconsistencies-and-detail/26875
                 self.kicad_conf_path = self.env['KICAD_CONFIG_HOME']
                 logger.debug('Redirecting KiCad config path to: '+self.kicad_conf_path)
+        # Allow config subcommands having no KiCad config files
+        elif args.command == 'config' or args.backed_up: True
         else:
             logger.warning('Missing KiCad main config file '+self.conf_kicad)
         # - eeschema config
@@ -206,6 +208,9 @@ class Config(object):
         # - hotkeys
         self.conf_hotkeys = os.path.join(self.kicad_conf_path, 'user.hotkeys')
         self.conf_hotkeys_bkp = None
+        # - config operations
+        self.conf_require_backups = True
+        self.conf_require_restore = True
         # - sym-lib-table
         self.user_sym_lib_table = os.path.join(self.kicad_conf_path, 'sym-lib-table')
         self.user_fp_lib_table = os.path.join(self.kicad_conf_path, 'fp-lib-table')
