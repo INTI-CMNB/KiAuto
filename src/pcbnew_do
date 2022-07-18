@@ -44,13 +44,14 @@ from kiauto.file_util import (load_filters, wait_for_file_created_by_process, ap
                               check_input_file, memorize_project, restore_project, get_log_files, create_kicad_config)
 from kiauto.file_util import set_time_out_scale as set_time_out_scale_f
 from kiauto.misc import (REC_W, REC_H, __version__, NO_PCB, PCBNEW_CFG_PRESENT, WAIT_START, WRONG_LAYER_NAME,
-                         WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, USER_HOTKEYS_PRESENT,
+                         WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, KICAD_VERSION_5_99, USER_HOTKEYS_PRESENT,
                          CORRUPTED_PCB, __copyright__, __license__, TIME_OUT_MULT, get_en_locale, KICAD_CFG_PRESENT,
                          MISSING_TOOL)
 from kiauto.ui_automation import (PopenContext, xdotool, wait_not_focused, wait_for_window, recorded_xvfb,
                                   wait_point, text_replace, set_time_out_scale, open_dialog_with_retry)
 
 TITLE_CONFIRMATION = '^Confirmation$'
+TITLE_FILE_OPEN_ERROR = '^File Open Error$'
 TITLE_ERROR = '^Error$'
 TITLE_WARNING = '^Warning$'
 # This is very Debian specific, you need to install `gdb` and the kicad-nightly-dbg package
@@ -160,16 +161,23 @@ def parse_drc(cfg):
 
 
 def dismiss_already_running():
-    # The "Confirmation" modal pops up if pcbnew is already running
-    nf_title = TITLE_CONFIRMATION
+    # "File Open Error" or "Confirmation" modal pops up if pcbnew is already running
+    if cfg.kicad_version >= KICAD_VERSION_5_99:
+        nf_title = TITLE_FILE_OPEN_ERROR
+    else:
+        nf_title = TITLE_CONFIRMATION
     wait_for_window(nf_title, nf_title, 1)
 
     logger.info('Dismiss pcbnew already running')
     xdotool(['search', '--onlyvisible', '--name', nf_title, 'windowfocus'])
+    if cfg.kicad_version >= KICAD_VERSION_5_99:
+        logger.debug('Found, sending Left')
+        xdotool(['key', 'Left'])
     logger.debug('Found, sending Return')
     xdotool(['key', 'Return'])
-    logger.debug('Wait a little, this dialog is slow')
-    sleep(5)
+    if cfg.kicad_version <  KICAD_VERSION_5_99:
+        logger.debug('Wait a little, this dialog is slow')
+        sleep(5)
 
 
 def dismiss_warning():  # pragma: no cover
@@ -199,7 +207,8 @@ def wait_pcbew_start(cfg):
     failed_focuse = False
     other = None
     try:
-        id = wait_pcbnew(args.wait_start, [TITLE_CONFIRMATION, TITLE_WARNING, TITLE_ERROR], cfg.popen_obj)
+        wait_title = [TITLE_CONFIRMATION, TITLE_FILE_OPEN_ERROR, TITLE_WARNING, TITLE_ERROR]
+        id = wait_pcbnew(args.wait_start, wait_title, cfg.popen_obj)
     except RuntimeError:  # pragma: no cover
         logger.debug('Time-out waiting for pcbnew, will retry')
         failed_focuse = True
@@ -216,7 +225,7 @@ def wait_pcbew_start(cfg):
             dismiss_error()
             logger.error('pcbnew reported an error')
             exit(PCBNEW_ERROR)
-        if other == TITLE_CONFIRMATION:
+        if other == TITLE_CONFIRMATION or other == TITLE_FILE_OPEN_ERROR:
             dismiss_already_running()
         if other == TITLE_WARNING:  # pragma: no cover
             dismiss_warning()
