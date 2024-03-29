@@ -513,6 +513,23 @@ def print_layers_n(cfg, id_pcbnew, print_dialog_keys):
     exit_pcbnew(cfg)
 
 
+def print_layers_cli(cfg):
+    # KiCad 8 export from CLI
+    # TODO  --fill_zones --pads --separate
+    cmd = ['kicad-cli', 'pcb', 'export', 'svg' if cfg.svg else 'pdf',
+           '--output', cfg.output_file,
+           '--layers', cfg.layers_kicad_cli,
+           '--theme', cfg.color_theme]
+    if cfg.mirror:
+        cmd.append('--mirror')
+    if cfg.monochrome:
+        cmd.append('--black-and-white')
+    if not cfg.no_title:
+        cmd.append('--include-border-title')
+    cmd.append(cfg.input_file)
+    run_command(cmd)
+
+
 def run_drc_5_1(cfg):
     logger.info('Open Inspect->DRC')
     wait_point(cfg)
@@ -1233,6 +1250,8 @@ def create_pcbnew_config(cfg):
                 logger.error('Unknown layer '+layer)
                 sys.exit(WRONG_LAYER_NAME)
             used_layers.add(id)
+    if cfg.ki8:
+        cfg.layers_kicad_cli = ','.join((cfg.board.GetStandardLayerName(n) for n in sorted(used_layers, reverse=True)))
     with open(cfg.conf_pcbnew, "wt") as text_file:
         if cfg.conf_pcbnew_json:
             conf = {"graphics": {"canvas_type": 2}}
@@ -1764,6 +1783,10 @@ if __name__ == '__main__':  # noqa: C901
             # First command to migrate to Python!
             run_drc_python(cfg)
         error_level = process_drc_out(cfg)
+        do_retry = False
+        cfg.use_interposer = cfg.enable_interposer = False
+    elif args.command == 'export' and cfg.ki8 and cfg.scaling == 1.0:
+        print_layers_cli(cfg)
         do_retry = False
         cfg.use_interposer = cfg.enable_interposer = False
     else:

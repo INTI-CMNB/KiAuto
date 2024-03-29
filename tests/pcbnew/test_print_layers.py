@@ -38,7 +38,8 @@ def test_print_pcb_good_dwg_1(test_dir):
     layers = ['F.Cu', 'F.SilkS', 'Dwgs.User', 'Edge.Cuts']
     ctx.run(cmd, extra=layers)
     ctx.expect_out_file(pdf)
-    ctx.compare_image(pdf)
+    #ctx.compare_image(pdf)
+    ctx.compare_pdf(pdf)
     assert mtime1 == ctx.get_pro_mtime()
     assert mtime2 == ctx.get_prl_mtime()
     ctx.clean_up()
@@ -50,7 +51,7 @@ def test_print_pcb_good_inner(test_dir):
     layers = ['F.Cu', 'F.SilkS', 'GND.Cu', 'Signal1.Cu', 'Inner.3', 'Power.Cu', 'Edge.Cuts']
     ctx.run(cmd, extra=layers)
     ctx.expect_out_file(DEFAULT)
-    ctx.compare_image(DEFAULT, 'good_pcb_inners.pdf')
+    ctx.compare_pdf(DEFAULT, 'good_pcb_inners.pdf')
     ctx.clean_up()
 
 
