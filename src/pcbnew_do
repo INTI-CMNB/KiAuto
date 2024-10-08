@@ -1690,8 +1690,9 @@ if __name__ == '__main__':  # noqa: C901
     logger.debug('Print -> '+cfg.print_dlg_name)
 
     # Force english + UTF-8
-    en_locale = get_en_locale(logger)
-    os.environ['LC_ALL'] = en_locale
+    # Note: KiCad 6 needs a valid locale, C uses english
+    #       KiCad 7 doesn't need a valid locale 'en' is fine, C uses what LANG says
+    os.environ['LC_ALL'] = 'en' if cfg.ki7 else get_en_locale(logger)
     # Force english for GTK dialogs
     os.environ['LANGUAGE'] = 'en'
     # Force Mesa software rendering (otherwise, the 3D viewer may crash)

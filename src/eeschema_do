@@ -977,7 +977,8 @@ if __name__ == '__main__':
     # Configure KiCad in a deterministic way
     #
     # Force english + UTF-8
-    os.environ['LANG'] = get_en_locale(logger)
+    # Note: KiCad 6 needs a valid locale here, 7 doesn't
+    os.environ['LANG'] = 'en' if cfg.ki7 else get_en_locale(logger)
     # Ensure we have a config dir
     check_kicad_config_dir(cfg)
     # Make sure the user has sym-lib-table
