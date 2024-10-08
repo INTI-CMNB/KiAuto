@@ -164,7 +164,7 @@ test_docker_local_k7_1:
 	$(PY_COV) html
 	rm .coverage
 
-#t1k7: test_docker_local_k7_1
+t1k7: test_docker_local_k7_1
 
 test_docker_local_k8_1:
 	rm -rf output
@@ -172,7 +172,7 @@ test_docker_local_k8_1:
 		/bin/bash -c "$(PYTEST) --log-cli-level debug -k '$(SINGLE_TEST)' --test_dir output ; chown -R $(USER_ID):$(GROUP_ID) output/ tests/kicad8/ .coverage.*"
 	rm .coverage.*
 
-t1k8: test_docker_local_k8_1
+# t1k8: test_docker_local_k8_1
 
 test_docker_local_k8_1_ni:
 	rm -rf output
@@ -273,7 +273,7 @@ gen_ref:
 	# Restore the colors scheme
 	mv $(HOME)/.config/kicad/7.0/colors.ok $(HOME)/.config/kicad/7.0/colors
 
-t1k7: single_test
+t1k8: single_test
 
 single_test:
 	-@rm .coverage
