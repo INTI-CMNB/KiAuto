@@ -1,3 +1,10 @@
+kiauto (2.3.3-1) stable; urgency=medium
+
+  * Fixed issues when the english locale wasn't installed and using
+    other locale.
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Tue, 08 Oct 2024 10:48:54 -0300
+
 kiauto (2.3.2-1) stable; urgency=medium
 
   * Support for KiCad 8.0.3

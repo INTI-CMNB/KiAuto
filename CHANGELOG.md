@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.3.3] - 2024-10-08
+### Fixed
+- Problems when the system locale isn't English and the English locale
+  isn't installed. In this case KiCad 7/8 didn't switch to English when
+  the environment asked for "C" locale. Note that KiCad 6 prevented the
+  use of English if it wasn't installed.
+
+
 ## [2.3.2] - 2024-06-19
 ### Added
 - Support for KiCad 8.0.3 (bogus Report dialog)
