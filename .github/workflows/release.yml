@@ -23,19 +23,19 @@ jobs:
           echo $StatusCode
           if [[ "$StatusCode" == 200 ]]; then
             echo "This is tagged release!"
-            echo "::set-output name=is_tag::no"
+            echo "IS_TAG=no" >> $GITHUB_OUTPUT
           else
             echo "This is a tag not release!"
-            echo "::set-output name=is_tag::yes"
+            echo "IS_TAG=yes" >> $GITHUB_OUTPUT
           fi
 
   build:
     runs-on: ubuntu-latest
     container: setsoft/kicad_pybuild:latest
     needs: check
-    if: ${{ needs.check.outputs.is_tag == 'yes' }}
+    if: ${{ needs.check.outputs.IS_TAG == 'yes' }}
     outputs:
-      deb_name: ${{ steps.mdeb.outputs.deb_name }}
+      DEB_NAME: ${{ steps.mdeb.outputs.DEB_NAME }}
 
     steps:
       - name: Checkout
@@ -46,7 +46,7 @@ jobs:
         run: |
           make deb
           mv ../*.deb .
-          echo "::set-output name=deb_name::"`ls *.deb`
+          echo "DEB_NAME="`ls *.deb` >> $GITHUB_OUTPUT
           mkdir output
           mv *.deb output
 
@@ -68,13 +68,6 @@ jobs:
         with:
           name: package
 
-      - name: Debug
-        run: |
-          echo ${{needs.build.outputs.deb_name}}
-          ls -la
-          ls -la package
-          ls -la package/${{needs.build.outputs.deb_name}}
-
       - name: Release
         uses: docker://antonyurchenko/git-release:latest
         env:
@@ -84,7 +77,7 @@ jobs:
           CHANGELOG_FILE: "CHANGELOG.md"
         with:
           args: |
-            package/${{needs.build.outputs.deb_name}}
+            ${{needs.build.outputs.DEB_NAME}}
 
 #       - name: Trigger kicad_auto image build
 #         run: |
