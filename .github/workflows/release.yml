@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "v*"
+  repository_dispatch:
+    types: [test_release]
 
 jobs:
   check:
