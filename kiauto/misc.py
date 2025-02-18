@@ -48,6 +48,7 @@ TIME_OUT_MULT = 1.0
 KICAD_VERSION_5_99 = 5099000
 KICAD_VERSION_6_99 = 6099000
 KICAD_VERSION_7_99 = 7099000
+KICAD_VERSION_8_99 = 8099000
 KICAD_VERSION_7_0_3 = 7000003
 KICAD_VERSION_7_0_8 = 7000008
 KICAD_SHARE = '/usr/share/kicad/'
@@ -161,6 +162,7 @@ class Config(object):
         self.ki6 = self.kicad_version >= KICAD_VERSION_5_99
         self.ki7 = self.kicad_version >= KICAD_VERSION_6_99
         self.ki8 = self.kicad_version >= KICAD_VERSION_7_99
+        self.ki9 = self.kicad_version >= KICAD_VERSION_8_99
         if self.ki7:
             # Now part of the kicad-cli tool
             self.kicad2step = self.kicad_cli

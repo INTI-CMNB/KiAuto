@@ -1253,7 +1253,7 @@ def create_pcbnew_config(cfg):
             if layer_n < 1 or layer_n >= layer_cnt - 1:
                 logger.error(layer+" isn't a valid layer")
                 sys.exit(WRONG_LAYER_NAME)
-            used_layers.add(layer_n)
+            used_layers.add((layer_n+1)*2 if cfg.ki9 else layer_n)
         else:
             id = cfg.board.GetLayerID(layer)
             if id < 0:
