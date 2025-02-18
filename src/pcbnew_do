@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020-2024 Salvador E. Tropea
-# Copyright (c) 2020-2024 Instituto Nacional de Tecnología Industrial
+# Copyright (c) 2020-2025 Salvador E. Tropea
+# Copyright (c) 2020-2025 Instituto Nacional de Tecnología Industrial
 # Copyright (c) 2019 Jesse Vincent (@obra)
 # Copyright (c) 2018-2019 Seppe Stas (@seppestas) (Productize SPRL)
 # Based on ideas by: Scott Bezek (@scottbez1)
@@ -705,6 +705,24 @@ def export_gencad(cfg):
         export_gencad_i(cfg, keys)
     else:
         export_gencad_n(cfg, keys)
+
+
+def export_gencad_cli(cfg):
+    logger.debug("Using kicad-cli instead of running KiCad")
+    # Run the export from CLI
+    cmd = [cfg.kicad_cli, 'pcb', 'export', 'gencad', '-o', cfg.output_file]
+    if cfg.flip_bottom_padstacks:
+        cmd.append('--flip-bottom-pads')
+    if cfg.unique_pin_names:
+        cmd.append('--unique-pins')
+    if cfg.no_reuse_shapes:
+        cmd.append('--unique-footprints')
+    if cfg.aux_origin:
+        cmd.append('--use-drill-origin')
+    if cfg.save_origin:
+        cmd.append('--store-origin-coord')
+    cmd.append(cfg.input_file)
+    run_command(cmd)
 
 
 def export_vrml_i(cfg, keys):
@@ -1860,6 +1878,9 @@ if __name__ == '__main__':  # noqa: C901
     do_retry = False
     if args.command == 'export_vrml' and cfg.ki9:
         export_vrml_cli(cfg)
+        cfg.use_interposer = cfg.enable_interposer = False
+    elif args.command == 'export_gencad' and cfg.ki9:
+        export_gencad_cli(cfg)
         cfg.use_interposer = cfg.enable_interposer = False
     elif args.command == 'run_drc' and not cfg.ki5 and (not args.force_gui or cfg.ki8):
         if cfg.ki8:
