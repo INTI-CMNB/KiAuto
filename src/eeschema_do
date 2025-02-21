@@ -245,6 +245,8 @@ def eeschema_plot_schematic_cli(cfg):
             cmd.extend(['--pages', '1'])
         else:
             cmd.append('--plot-one')
+    if cfg.ki9 and cfg.default_font:
+        cmd.extend(['--default-font', cfg.default_font])
     cmd.append(cfg.input_file)
     run_command(cmd)
 
@@ -908,7 +910,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_out_scale', help='Timeout multiplier, affects most timeouts',
                         type=float, default=TIME_OUT_MULT)
 
-    # abcfFmoOp
+    # abcfFmoOpt
     export_parser = subparsers.add_parser('export', help='Export a schematic')
     export_parser.add_argument('--file_format', '-f', help='Export file format',
                                choices=['svg', 'pdf', 'ps', 'dxf', 'hpgl'], default='pdf')
@@ -924,6 +926,7 @@ if __name__ == '__main__':
                                help='HPGL origin: 0 bottom left, 1 centered, 2 page fit, 3 content fit (KiCad 6+)')
     export_parser.add_argument('--hpgl_pen_size', '-p', type=float, help='HPGL pen size in mm [0.4826] (KiCad 6+)',
                                default=0.4826)
+    export_parser.add_argument('--default_font', '-t', type=str, help='Default font (KiCad 9+)', default='KiCad Font')
 
     erc_parser = subparsers.add_parser('run_erc', help='Run Electrical Rules Checker on a schematic')
     erc_parser.add_argument('--errors_filter', '-f', nargs=1, help='File with filters to exclude errors')
@@ -958,6 +961,7 @@ if __name__ == '__main__':
     cfg.background_color = getattr(args, 'background_color', False)
     cfg.hpgl_origin = getattr(args, 'hpgl_origin', 0)
     cfg.hpgl_pen_size = getattr(args, 'hpgl_pen_size', 0.19)
+    cfg.default_font = getattr(args, 'default_font', 'KiCad Font')
     # Make sure the input file exists and has an extension
     check_input_file(cfg, NO_SCHEMATIC, WRONG_SCH_NAME)
     # Load filters
