@@ -1,3 +1,9 @@
+kiauto (2.3.4-1) UNRELEASED; urgency=medium
+
+  * Default schematic font for export
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Fri, 21 Feb 2025 13:57:44 -0300
+
 kiauto (2.3.3-1) stable; urgency=medium
 
   * Fixed issues when the english locale wasn't installed and using
