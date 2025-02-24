@@ -1,8 +1,9 @@
-kiauto (2.3.4-1) UNRELEASED; urgency=medium
+kiauto (2.3.4-1) stable; urgency=medium
 
+  * KiCad 9 support and optimizations
   * Default schematic font for export
 
- -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Fri, 21 Feb 2025 13:57:44 -0300
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Fri, 24 Feb 2025 13:57:44 -0300
 
 kiauto (2.3.3-1) stable; urgency=medium
 
