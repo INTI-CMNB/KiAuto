@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.3.5] - UNRELEASED
+### Added
+- Workaround for KiCad bugs #20448 + #20453
+  - #20448 KiCad 9 created sch without pages for new projects
+  - #20453 kicad-cli doesn't report a fail when selecting a bogus page to print
+
+
 ## [2.3.4] - 2025-02-24
 ### Added
 - KiCad 9 support and optimizations

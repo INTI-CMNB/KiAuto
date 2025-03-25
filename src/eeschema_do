@@ -248,7 +248,12 @@ def eeschema_plot_schematic_cli(cfg):
     if cfg.ki9 and cfg.default_font:
         cmd.extend(['--default-font', cfg.default_font])
     cmd.append(cfg.input_file)
-    run_command(cmd)
+    res = run_command(cmd)
+    # KiCad bug: #20448 empty schematic without pages + #20453 that returns 0 on fail
+    if 'No sheets to plot' in res and not cfg.all_pages and cfg.ki8:
+        logger.warning('No pages printed, trying to print all')
+        index = cmd.index('--pages')
+        run_command(cmd[:index]+cmd[index+2:])
 
 
 def eeschema_plot_schematic(cfg):
