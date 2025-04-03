@@ -47,7 +47,7 @@ from kiauto.file_util import (load_filters, wait_for_file_created_by_process, ap
 from kiauto.misc import (REC_W, REC_H, __version__, NO_PCB, PCBNEW_CFG_PRESENT, WAIT_START, WRONG_LAYER_NAME,
                          WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, USER_HOTKEYS_PRESENT, RULES_KEY,
                          CORRUPTED_PCB, __copyright__, __license__, TIME_OUT_MULT, get_en_locale, KICAD_CFG_PRESENT,
-                         MISSING_TOOL, KICAD_VERSION_6_99)
+                         MISSING_TOOL, KICAD_VERSION_6_99, KICAD_VERSION_9_0_1)
 from kiauto.interposer import (check_interposer, dump_interposer_dialog, start_queue, setup_interposer_filename,
                                create_interposer_print_options_file, wait_queue, wait_start_by_msg, wait_and_show_progress,
                                set_kicad_process, open_dialog_i, wait_kicad_ready_i, paste_bogus_filename, paste_text_i,
@@ -904,6 +904,14 @@ def ipc_netlist_i(cfg, keys):
     wait_create_i(cfg, 'IPC D-356')
     # Exit
     exit_kicad_i(cfg)
+
+
+def ipc_netlist_cli(cfg):
+    logger.debug("Using kicad-cli instead of running KiCad")
+    # Run the export from CLI
+    cmd = [cfg.kicad_cli, 'pcb', 'export', 'ipcd356', '-o', cfg.output_file]
+    cmd.append(cfg.input_file)
+    run_command(cmd)
 
 
 def wait_ray_tracer(cfg):
@@ -1881,6 +1889,9 @@ if __name__ == '__main__':  # noqa: C901
         cfg.use_interposer = cfg.enable_interposer = False
     elif args.command == 'export_gencad' and cfg.ki9:
         export_gencad_cli(cfg)
+        cfg.use_interposer = cfg.enable_interposer = False
+    elif args.command == 'ipc_netlist' and cfg.kicad_version >= KICAD_VERSION_9_0_1:
+        ipc_netlist_cli(cfg)
         cfg.use_interposer = cfg.enable_interposer = False
     elif args.command == 'run_drc' and not cfg.ki5 and (not args.force_gui or cfg.ki8):
         if cfg.ki8:

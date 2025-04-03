@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.5] - UNRELEASED
 ### Added
+- IPC Netlist: Added support for CLI when using KiCad 9.0.1
 - Workaround for KiCad bugs #20448 + #20453
   - #20448 KiCad 9 created sch without pages for new projects
   - #20453 kicad-cli doesn't report a fail when selecting a bogus page to print
