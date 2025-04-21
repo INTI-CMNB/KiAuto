@@ -1,3 +1,9 @@
+kiauto (2.3.6-1) UNRELEASED; urgency=medium
+
+  * More robust Altium conversion
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Mon, 21 Apr 2025 13:26:18 -0300
+
 kiauto (2.3.5-1) stable; urgency=medium
 
   * IPC netlist from CLI for 9.0.1
