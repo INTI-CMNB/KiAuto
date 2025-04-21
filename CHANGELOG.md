@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [2.3.6] - UNRELEASED
+### Added
+- More robust Altium conversion
+  - KiCad 8: Support for nested modals (Report + Missing font)
+  - KiCad 9: Dismiss layer mapping
+
+
 ## [2.3.5] - 2024-04-03
 ### Added
 - IPC Netlist: Added support for CLI when using KiCad 9.0.1

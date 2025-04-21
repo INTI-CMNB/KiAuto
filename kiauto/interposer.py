@@ -12,6 +12,7 @@ import re
 import shutil
 from sys import exit, exc_info
 from tempfile import mkdtemp
+from time import sleep
 from threading import Thread
 import time
 from traceback import extract_stack, format_list, print_tb
@@ -600,6 +601,14 @@ def dismiss_remap_symbols(cfg, title):
     unknown_dialog(cfg, title, msgs)
 
 
+def dismiss_remap_layers(cfg, title):
+    """ KiCad 9 importing Altium files """
+    wait_queue(cfg, 'GTK:Main:In')
+    dismiss_dialog(cfg, title, ['alt+l'])
+    time.sleep(1)
+    dismiss_dialog(cfg, title, ['alt+l', 'alt+o'])
+
+
 def dismiss_save_changes(cfg, title):
     """ KiCad 5/6 asking for save changes to disk """
     msgs = collect_dialog_messages(cfg, title)
@@ -621,6 +630,13 @@ def dismiss_pcb_info(cfg, title):
             cfg.logger.warning(msg)
             found = True
             break
+        else:
+            ma = re.search(r"Font '(.*)' not found; substituting '(.*)'", msg)
+            if ma:
+                cfg.logger.warning(f"Missing '{ma.group(1)}' font")
+                cfg.logger.warning("KiCad message: "+msg)
+                found = True
+                break
     if not found:
         unknown_dialog(cfg, title, msgs, fatal=False)
     dismiss_dialog(cfg, title, 'Return')
@@ -709,21 +725,43 @@ def wait_start_by_msg(cfg):
         prg_name = 'Eeschema'
         unsaved = ' noname.sch'
     cfg.logger.info('Waiting for {} window ...'.format(prg_name))
-    pre = 'GTK:Window Title:'
-    pre_l = len(pre)
+    pre1 = 'GTK:Window Title:'
+    pre1_l = len(pre1)
+    pre2 = 'GTK:Window Set Modal:'
+    pre2_l = len(pre2)
     cfg.logger.debug('Waiting {} to start and load the {}'.format(prg_name, kind))
     # Inform the elapsed time for slow loads
-    pres = [pre, 'PANGO:0:']
+    pres = [pre1, pre2, 'PANGO:0:']
     elapsed_r = re.compile(r'PANGO:(\d:\d\d:\d\d)')
     loading_msg = 'Loading '+kind
     prg_msg = prg_name+' —'
     with_elapsed = False
+    modals = []
     while True:
         # Wait for any window
         res = wait_queue(cfg, pres, starts=True, timeout=cfg.wait_start, with_windows=True)
         cfg.logger.debug('wait_start_by_msg got '+res)
         match = elapsed_r.match(res)
-        title = res[pre_l:]
+        title = res[pre1_l:]
+        # The following code deals with the elusive "Report" dialog
+        # This dialog is always created, but if filled it becomes modal
+        if res.startswith(pre2):
+            modal = res[pre2_l:]
+            cfg.logger.debug(f"Detected window changing modal status: `{modal}`")
+            if modal[-1] == '1':
+                modals.append(modal[:-2])
+            elif modal[-1] == '0':
+                modals.remove(modal[:-2])
+                if len(modals):
+                    name = modals[-1]
+                    cfg.logger.error(f'Insisting with nested modal `{name}`')
+                    dismiss_dialog(cfg, modals[-1], ['Tab', 'Return'] if name == 'Report' else 'Return')
+            if modal == 'Report 1':
+                # Return is not enough, OK is not the default
+                dismiss_dialog(cfg, 'Report', ['Tab', 'Return'])
+            elif modal == 'Edit Mapping of Imported Layers 1':
+                dismiss_remap_layers(cfg, modal[:-2])
+            continue
         if not match and with_elapsed:
             log.flush_info()
         if not cfg.ki5 and title.endswith(cfg.window_title_end):
@@ -779,6 +817,9 @@ def wait_start_by_msg(cfg):
             pass
         elif title == 'Report':
             # KiCad 8.0.3 bogus hidden dialog
+            pass
+        elif title == 'Edit Mapping of Imported Layers':
+            # KiCad 9 import, we handle it on modal 1
             pass
         else:
             unknown_dialog(cfg, title)

@@ -171,6 +171,9 @@ void gtk_button_set_label(GtkButton* button, const char *label)
     label="C_lose";
  else if (g_strcmp0(label, "Generate")==0)
     label="_Generate";
+ else if (g_strcmp0(label, "Auto-Match Layers")==0)
+    /* KiCad 9 importing Altium files, asking to confirm the layer mapping */
+    label="Auto-Match _Layers";
  next_func(button, label);
  printf("GTK:Button Label:%s\n", label);
  if (label!=ori)
