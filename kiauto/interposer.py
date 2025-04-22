@@ -750,7 +750,7 @@ def wait_start_by_msg(cfg):
             cfg.logger.debug(f"Detected window changing modal status: `{modal}`")
             if modal[-1] == '1':
                 modals.append(modal[:-2])
-            elif modal[-1] == '0':
+            elif modal[-1] == '0' and modal[:-2] in modals:
                 modals.remove(modal[:-2])
                 if len(modals):
                     name = modals[-1]
