@@ -761,6 +761,10 @@ def wait_start_by_msg(cfg):
                 dismiss_dialog(cfg, 'Report', ['Tab', 'Return'])
             elif modal == 'Edit Mapping of Imported Layers 1':
                 dismiss_remap_layers(cfg, modal[:-2])
+            elif modal == 'KiCad PCB Editor Error 1':
+                title = modal[:-2]
+                cfg.logger.warning("PCB Editor error "+str(collect_dialog_messages(cfg, title)))
+                dismiss_dialog(cfg, title, 'Return')
             continue
         if not match and with_elapsed:
             log.flush_info()
@@ -820,6 +824,9 @@ def wait_start_by_msg(cfg):
             pass
         elif title == 'Edit Mapping of Imported Layers':
             # KiCad 9 import, we handle it on modal 1
+            pass
+        elif title == 'KiCad PCB Editor Error':
+            # we handle it on modal 1
             pass
         else:
             unknown_dialog(cfg, title)
