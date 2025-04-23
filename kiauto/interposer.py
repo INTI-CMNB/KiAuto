@@ -732,6 +732,10 @@ def wait_start_by_msg(cfg):
     cfg.logger.debug('Waiting {} to start and load the {}'.format(prg_name, kind))
     # Inform the elapsed time for slow loads
     pres = [pre1, pre2, 'PANGO:0:']
+
+    for t in ASYNC_DIALOGS:
+        pres.append('GTK:Window Show:'+t)
+
     elapsed_r = re.compile(r'PANGO:(\d:\d\d:\d\d)')
     loading_msg = 'Loading '+kind
     prg_msg = prg_name+' —'
@@ -816,6 +820,11 @@ def wait_start_by_msg(cfg):
             dismiss_remap_symbols(cfg, title)
         elif title in INFO_DIALOGS:
             dismiss_pcb_info(cfg, title)
+            # Nested report + missing font
+            if len(modals):
+                name = modals[-1]
+                cfg.logger.error(f'Insisting with nested modal `{name}`')
+                dismiss_dialog(cfg, modals[-1], ['Tab', 'Return'] if name == 'Report' else 'Return')
         elif title.startswith(KIKIT_HIDE):
             # Buggy KiKit plugin creating a dialog at start-up (many times)
             pass
