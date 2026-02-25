@@ -738,6 +738,7 @@ def wait_start_by_msg(cfg):
 
     elapsed_r = re.compile(r'PANGO:(\d:\d\d:\d\d)')
     loading_msg = 'Loading '+kind
+    load_msg = 'Load '+kind  # KiCad 10 name (WTF?!)
     prg_msg = prg_name+' —'
     with_elapsed = False
     modals = []
@@ -796,7 +797,7 @@ def wait_start_by_msg(cfg):
             # This is the main window before loading anything
             # Note that KiCad 5 can create dialogs BEFORE this
             pass
-        elif title == loading_msg:
+        elif title == loading_msg or title == load_msg:
             # This is the dialog for the loading progress, wait
             pass
         elif match is not None:
