@@ -1313,6 +1313,9 @@ def create_pcbnew_config(cfg):
                                 "color_theme": cfg.color_theme,
                                 "use_theme": True,
                                 "title_block": not cfg.no_title,
+                                "drill_marks": cfg.pads,  # Used by KiCad 10
+                                "pagination": 0 if cfg.separate else 1,  # Used by KiCad 10
+                                "mirror": cfg.mirror,  # Used by KiCad 10
                                 "scale": cfg.scaling,
                                 "layers": sorted(used_layers)}
             conf["plot"] = {"check_zones_before_plotting": cfg.fill_zones,
