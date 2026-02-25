@@ -245,6 +245,8 @@ def create_kicad_config(cfg):
             kiconf = {"environment": {"show_warning_dialog": False}}
             kiconf['graphics'] = {"cairo_antialiasing_mode": 0, "opengl_antialiasing_mode": 0}
             kiconf['system'] = {"editor_name": "/bin/cat"}
+            # KiCad 10 checks this to show a dialog asking for configuration
+            kiconf['do_not_show_again'] = {"data_collection_prompt": True, "update_check_prompt": True}
             # Copy the environment vars if available
             if cfg.conf_kicad_bkp:
                 vars = Config.get_config_vars_json(cfg.conf_kicad_bkp, logger)
