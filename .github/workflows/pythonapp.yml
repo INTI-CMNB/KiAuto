@@ -87,28 +87,28 @@ jobs:
 #         ls -la ~/bin/
 #         cd ${CURDIR}
 #         ~/bin/coveralls report --debug --format python .coverage
-    - name: Upload Coverage
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.ki_release }}_${{ matrix.w_tests }}
-        COVERALLS_PARALLEL: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        # apt-get update
-        # apt-get -y install python3-pip
-        # pip3 install coveralls
-        #coveralls --service=github
-        #echo Disabled by now
-        coveralls
-
-  coveralls:
-    name: Finish Coveralls
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - name: Finished
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: |
-        curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]="$GITHUB_RUN_ID"&payload[status]=done"
+#     - name: Upload Coverage
+#       env:
+#         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+#         COVERALLS_FLAG_NAME: ${{ matrix.ki_release }}_${{ matrix.w_tests }}
+#         COVERALLS_PARALLEL: true
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       run: |
+#         # apt-get update
+#         # apt-get -y install python3-pip
+#         # pip3 install coveralls
+#         #coveralls --service=github
+#         #echo Disabled by now
+#         coveralls
+#
+#   coveralls:
+#     name: Finish Coveralls
+#     needs: test
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Finished
+#       env:
+#         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+#       run: |
+#         curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]="$GITHUB_RUN_ID"&payload[status]=done"
 
