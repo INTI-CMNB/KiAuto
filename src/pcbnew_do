@@ -1173,12 +1173,21 @@ def capture_3d_view_i(cfg):
 
     if cfg.ray_tracing:
         send_keys(cfg, 'Start ray tracing', ['key']+cfg.keys_rt+['Return'])
-        wait_queue(cfg, 'PANGO:Raytracing')
+        if cfg.ki10:
+            wait_queue(cfg, 'PANGO:Reload time', starts=True)
+        else:
+            wait_queue(cfg, 'PANGO:Raytracing')
         wait_ray_tracer_i(cfg)
 
     # Save the image as PNG
     # Open the Save dialog
-    file_dlg, _ = open_dialog_i(cfg, '3D Image File Name', ['key', 'alt+f', 'Return'])
+    if cfg.ki10:
+        export_dlg, _ = open_dialog_i(cfg, 'Export 3D View', ['key', 'alt+f', 'Return'])
+        # TODO: Here we could set the resolution, but the dialog lacks shortcuts
+        file_dlg, _ = open_dialog_i(cfg, '3D Image File Name', ['key', 'alt+o'])
+    else:
+        file_dlg, _ = open_dialog_i(cfg, '3D Image File Name', ['key', 'alt+f', 'Return'])
+
     # Paste the name
     paste_bogus_filename(cfg)
     # Wait for the image to be created
