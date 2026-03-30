@@ -971,7 +971,7 @@ if __name__ == '__main__':
     cfg.verbose = args.verbose
     cfg.video_name = args.command+'_eeschema_screencast.ogv'
     cfg.all_pages = getattr(args, 'all_pages', False)
-    cfg.pages = getattr(args, 'pages')
+    cfg.pages = getattr(args, 'pages', None)
     cfg.monochrome = getattr(args, 'monochrome', False)
     cfg.no_frame = getattr(args, 'no_frame', False)
     cfg.warnings_as_errors = getattr(args, 'warnings_as_errors', False)
