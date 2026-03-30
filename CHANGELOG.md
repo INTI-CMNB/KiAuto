@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More robust Altium conversion
   - KiCad 8: Support for nested modals (Report + Missing font)
   - KiCad 9: Dismiss layer mapping
+- Schematic print: --pages option
 
 
 ## [2.3.5] - 2024-04-03

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020-2024 Salvador E. Tropea
-# Copyright (c) 2020-2024 Instituto Nacional de Tecnologïa Industrial
+# Copyright (c) 2020-2026 Salvador E. Tropea
+# Copyright (c) 2020-2026 Instituto Nacional de Tecnologïa Industrial
 # Copyright (c) 2019 Jesse Vincent (@obra)
 # Copyright (c) 2018-2019 Seppe Stas (@seppestas) (Productize SPRL)
 # Based on ideas by: Scott Bezek (@scottbez1)
@@ -240,11 +240,21 @@ def eeschema_plot_schematic_cli(cfg):
         cmd.append('--exclude-drawing-sheet')
     if not cfg.background_color and cfg.export_format != 'dxf' and cfg.export_format != 'hpgl':
         cmd.append('--no-background-color')
-    if not cfg.all_pages:
-        if cfg.ki8:
+    # pages/all_pages
+    if cfg.ki8:
+        if cfg.pages:
+            cmd.extend(['--pages', cfg.pages])
+        elif not cfg.all_pages:
             cmd.extend(['--pages', '1'])
-        else:
+        # else: nothing means all pages
+    else:
+        if cfg.pages:
+            logger.error('Pages is available only for KiCad 8+ and the CLI')
+            exit(WRONG_ARGUMENTS)
+        elif not cfg.all_pages:
             cmd.append('--plot-one')
+        # else: nothing means all pages
+    # default_font
     if cfg.ki9 and cfg.default_font:
         cmd.extend(['--default-font', cfg.default_font])
     cmd.append(cfg.input_file)
@@ -919,7 +929,11 @@ if __name__ == '__main__':
     export_parser = subparsers.add_parser('export', help='Export a schematic')
     export_parser.add_argument('--file_format', '-f', help='Export file format',
                                choices=['svg', 'pdf', 'ps', 'dxf', 'hpgl'], default='pdf')
-    export_parser.add_argument('--all_pages', '-a', help='Plot all schematic pages in one file', action='store_true')
+
+    pages_group = export_parser.add_mutually_exclusive_group()
+    pages_group.add_argument('--all_pages', '-a', help='Plot all schematic pages in one file', action='store_true')
+    pages_group.add_argument('--pages', type=str, help='Comma separated list of pages (KiCad 8+/CLI)')
+
     export_parser.add_argument('--monochrome', '-m', help='Black and white output', action='store_true')
     export_parser.add_argument('--no_frame', '-F', help='No frame and title block', action='store_true')
     export_parser.add_argument('--output_name', '-o', nargs=1, help='Name of the output file')
@@ -957,6 +971,7 @@ if __name__ == '__main__':
     cfg.verbose = args.verbose
     cfg.video_name = args.command+'_eeschema_screencast.ogv'
     cfg.all_pages = getattr(args, 'all_pages', False)
+    cfg.pages = getattr(args, 'pages')
     cfg.monochrome = getattr(args, 'monochrome', False)
     cfg.no_frame = getattr(args, 'no_frame', False)
     cfg.warnings_as_errors = getattr(args, 'warnings_as_errors', False)
