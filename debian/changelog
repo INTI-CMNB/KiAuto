@@ -1,8 +1,9 @@
-kiauto (2.3.6-1) UNRELEASED; urgency=medium
+kiauto (2.3.6-1) stable; urgency=medium
 
   * More robust Altium conversion
+  * Schematic print: --pages option
 
- -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Mon, 21 Apr 2025 13:26:18 -0300
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Tue, 31 Mar 2026 08:51:20 -0300
 
 kiauto (2.3.5-1) stable; urgency=medium
 

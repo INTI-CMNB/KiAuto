@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020-2023 Salvador E. Tropea
-# Copyright (c) 2020-2023 Instituto Nacional de Tecnologïa Industrial
+# Copyright (c) 2020-2026 Salvador E. Tropea
+# Copyright (c) 2020-2026 Instituto Nacional de Tecnologïa Industrial
 # License: Apache 2.0
 # Project: KiAuto (formerly kicad-automation-scripts)
 import configparser
@@ -353,7 +353,7 @@ def get_en_locale(logger):
 
 
 __author__ = 'Salvador E. Tropea'
-__copyright__ = 'Copyright 2018-2024, INTI/Productize SPRL'
+__copyright__ = 'Copyright 2018-2026, INTI/Productize SPRL'
 __credits__ = ['Salvador E. Tropea', 'Seppe Stas', 'Jesse Vincent', 'Scott Bezek']
 __license__ = 'Apache 2.0'
 __email__ = 'stropea@inti.gob.ar'
