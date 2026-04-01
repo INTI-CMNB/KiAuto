@@ -1,3 +1,9 @@
+kiauto (2.3.7-1) UNRELEASED; urgency=medium
+
+  * Fixed KiCad 10 welcome dialog
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Wed, 01 Apr 2026 09:34:37 -0300
+
 kiauto (2.3.6-1) stable; urgency=medium
 
   * More robust Altium conversion

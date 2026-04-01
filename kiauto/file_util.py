@@ -174,7 +174,7 @@ def check_lib_table(fuser, fsys):
                 shutil.copy2(f, fuser)
                 logger.debug('Copied {} to {}'.format(f, fuser))
                 return
-        logger.warning('Missing default system symbol table '+fsys[0] +
+        logger.warning('Missing default system table '+fsys[0] +
                        ' creating an empty one')  # pragma: no cover
         with open(fuser, 'wt') as f:
             f.write('({} )\n'.format(os.path.basename(fuser).replace('-', '_')))

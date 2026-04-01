@@ -261,8 +261,10 @@ class Config(object):
         # - sym-lib-table
         self.user_sym_lib_table = os.path.join(self.kicad_conf_path, 'sym-lib-table')
         self.user_fp_lib_table = os.path.join(self.kicad_conf_path, 'fp-lib-table')
+        self.user_design_block_lib_table = os.path.join(self.kicad_conf_path, 'design-block-lib-table')
         self.sys_sym_lib_table = [KICAD_SHARE+'template/sym-lib-table']
         self.sys_fp_lib_table = [KICAD_SHARE+'template/fp-lib-table']
+        self.sys_design_block_lib_table = [KICAD_SHARE+'template/design-block-lib-table']
         if ng_ver:
             # 20200912: sym-lib-table is missing
             self.sys_sym_lib_table.insert(0, KICAD_NIGHTLY_SHARE+'template/sym-lib-table')
@@ -359,4 +361,4 @@ __license__ = 'Apache 2.0'
 __email__ = 'stropea@inti.gob.ar'
 __status__ = 'stable'
 __url__ = 'https://github.com/INTI-CMNB/KiAuto/'
-__version__ = '2.3.6'
+__version__ = '2.3.7'

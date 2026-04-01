@@ -1916,6 +1916,11 @@ if __name__ == '__main__':  # noqa: C901
         cfg.use_interposer = cfg.enable_interposer = False
     else:
         setup_config_files(cfg)
+        if cfg.ki10:
+            # Make sure the user has sym-lib-table
+            check_lib_table(cfg.user_sym_lib_table, cfg.sys_sym_lib_table)
+            # Make sure the user has design-block-lib-table
+            check_lib_table(cfg.user_design_block_lib_table, cfg.sys_design_block_lib_table)
         # Interposer settings
         check_interposer(args, logger, cfg)
         # When using the interposer inform the output file name using the environment
