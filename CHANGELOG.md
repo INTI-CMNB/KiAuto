@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [2.3.7] - 2026-04-23
-# Fixed
+### Fixed
 - KiCad 10: The release needs all the lib tables to avoid the welcome dialog
 
 
