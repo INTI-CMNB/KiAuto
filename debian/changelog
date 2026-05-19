@@ -1,3 +1,9 @@
+kiauto (2.3.8-1) stable; urgency=medium
+
+  * Fixed KiCad 10 bogus dialog when rendering large PCBs
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Tue, 19 May 2026 09:28:48 -0300
+
 kiauto (2.3.7-1) stable; urgency=medium
 
   * Fixed KiCad 10 welcome dialog
