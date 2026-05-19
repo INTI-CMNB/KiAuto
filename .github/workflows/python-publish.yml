@@ -15,7 +15,7 @@ jobs:
     container: setsoft/kicad_pybuild:latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Build and publish
       env:

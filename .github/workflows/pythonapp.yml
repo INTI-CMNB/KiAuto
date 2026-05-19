@@ -31,7 +31,7 @@ jobs:
     container: ghcr.io/inti-cmnb/kicad_auto_test:${{ matrix.ki_release }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -45,7 +45,7 @@ jobs:
         make test_server_${{ matrix.ki_release }}
     - name: Store results
       if: ${{ always() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: Test_Output_${{ matrix.ki_release }}_${{ matrix.w_tests }}
         path: output

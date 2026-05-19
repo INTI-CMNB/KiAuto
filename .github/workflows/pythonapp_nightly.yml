@@ -21,13 +21,13 @@ jobs:
     container: setsoft/kicad_auto_test:nightly
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Test nightly
       run: |
         make test_server_nightly
     - name: Store results
       if: ${{ always() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: Test_Output_nightly
         path: output
