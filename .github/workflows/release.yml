@@ -10,6 +10,7 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions: write-all
     outputs:
       is_tag: ${{ steps.check.outputs.is_tag }}
 
