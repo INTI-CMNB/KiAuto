@@ -212,6 +212,9 @@ def wait_queue(cfg, strs='', starts=False, times=1, timeout=300, do_to=True, kic
             elif title.startswith(KIKIT_HIDE):
                 # Buggy KiKit plugin creating a dialog at start-up (many times)
                 pass
+            elif cfg.ki10 and not title.strip():
+                # Misterious buggy dialog from KiCad 10
+                cfg.logger.debug('Ignoring dialog without title')
             else:
                 unknown_dialog(cfg, title)
             if dialog_interrupts:
