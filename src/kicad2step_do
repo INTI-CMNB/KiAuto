@@ -112,6 +112,7 @@ if __name__ == '__main__':
     else:
         args.output_dir = args.output_dir[0]
     cfg = Config(logger, args.pcb_filename, args)
+    cfg.variant = args.variant
 
     # Create output dir, compute full name for output file and remove it
     output_dir = os.path.abspath(args.output_dir)
@@ -147,7 +148,7 @@ if __name__ == '__main__':
         cmd.append('--min-distance='+args.min_distance[0])
     if args.subst_models and cfg.kicad_version_major > 5:
         cmd.append('--subst-models')
-    add_variant(cmd, args)
+    add_variant(cmd, cfg)
     cmd.append(args.pcb_filename)
     logger.debug("Command: "+str(cmd))
 
