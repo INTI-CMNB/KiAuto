@@ -45,7 +45,7 @@ from kiauto.file_util import (load_filters, wait_for_file_created_by_process, ap
 from kiauto.misc import (REC_W, REC_H, __version__, NO_SCHEMATIC, EESCHEMA_CFG_PRESENT, KICAD_CFG_PRESENT, RULES_KEY,
                          WAIT_START, WRONG_SCH_NAME, EESCHEMA_ERROR, Config, KICAD_VERSION_5_99, WONT_OVERWRITE,
                          USER_HOTKEYS_PRESENT, __copyright__, __license__, TIME_OUT_MULT, get_en_locale,
-                         KICAD_VERSION_7_0_3, KICAD_VERSION_7_0_8)
+                         KICAD_VERSION_7_0_3, KICAD_VERSION_7_0_8, add_variant)
 from kiauto.interposer import (check_interposer, dump_interposer_dialog, start_queue, wait_start_by_msg,
                                set_kicad_process, open_dialog_i, wait_kicad_ready_i,
                                paste_output_file_i, exit_kicad_i, paste_text_i, wait_queue,
@@ -257,6 +257,7 @@ def eeschema_plot_schematic_cli(cfg):
     # default_font
     if cfg.ki9 and cfg.default_font:
         cmd.extend(['--default-font', cfg.default_font])
+    add_variant(cmd, cfg)
     cmd.append(cfg.input_file)
     res = run_command(cmd)
     # KiCad bug: #20448 empty schematic without pages + #20453 that returns 0 on fail
@@ -648,7 +649,9 @@ def eeschema_run_erc_schematic_cli(cfg):
 
 
 def eeschema_netlist_commands_cli(cfg):
-    cmd = [cfg.kicad_cli, 'sch', 'export', 'netlist', '-o', cfg.output_file, '--format', 'kicadsexpr', cfg.input_file]
+    cmd = [cfg.kicad_cli, 'sch', 'export', 'netlist', '-o', cfg.output_file, '--format', 'kicadsexpr']
+    add_variant(cmd, cfg)
+    cmd.append(cfg.input_file)
     run_command(cmd)
 
 
@@ -715,7 +718,9 @@ def eeschema_netlist_commands_n(cfg, open_keys, generate_keys, dialog_name):
 
 
 def eeschema_bom_xml_commands_cli(cfg):
-    cmd = [cfg.kicad_cli, 'sch', 'export', 'netlist', '-o', cfg.output_file, '--format', 'kicadxml', cfg.input_file]
+    cmd = [cfg.kicad_cli, 'sch', 'export', 'netlist', '-o', cfg.output_file, '--format', 'kicadxml']
+    add_variant(cmd, cfg)
+    cmd.append(cfg.input_file)
     run_command(cmd)
 
 
@@ -924,6 +929,7 @@ if __name__ == '__main__':
     parser.add_argument('--wait_start', help='Timeout to pcbnew start ['+str(WAIT_START)+']', type=int, default=WAIT_START)
     parser.add_argument('--time_out_scale', help='Timeout multiplier, affects most timeouts',
                         type=float, default=TIME_OUT_MULT)
+    parser.add_argument('--variant', help='KiCad 10+ variant', type=str)
 
     # abcfFmoOpt
     export_parser = subparsers.add_parser('export', help='Export a schematic')
@@ -982,6 +988,7 @@ if __name__ == '__main__':
     cfg.hpgl_origin = getattr(args, 'hpgl_origin', 0)
     cfg.hpgl_pen_size = getattr(args, 'hpgl_pen_size', 0.19)
     cfg.default_font = getattr(args, 'default_font', 'KiCad Font')
+    cfg.variant = args.variant
     # Make sure the input file exists and has an extension
     check_input_file(cfg, NO_SCHEMATIC, WRONG_SCH_NAME)
     # Load filters

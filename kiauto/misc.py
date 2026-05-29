@@ -354,6 +354,11 @@ def get_en_locale(logger):
     return res
 
 
+def add_variant(cmd, cfg):
+    if cfg.ki10 and cfg.variant:
+        cmd.extend(['--variant', cfg.variant])
+
+
 __author__ = 'Salvador E. Tropea'
 __copyright__ = 'Copyright 2018-2026, INTI/Productize SPRL'
 __credits__ = ['Salvador E. Tropea', 'Seppe Stas', 'Jesse Vincent', 'Scott Bezek']

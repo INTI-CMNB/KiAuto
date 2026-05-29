@@ -47,7 +47,7 @@ from kiauto.file_util import (load_filters, wait_for_file_created_by_process, ap
 from kiauto.misc import (REC_W, REC_H, __version__, NO_PCB, PCBNEW_CFG_PRESENT, WAIT_START, WRONG_LAYER_NAME,
                          WRONG_PCB_NAME, PCBNEW_ERROR, WRONG_ARGUMENTS, Config, USER_HOTKEYS_PRESENT, RULES_KEY,
                          CORRUPTED_PCB, __copyright__, __license__, TIME_OUT_MULT, get_en_locale, KICAD_CFG_PRESENT,
-                         MISSING_TOOL, KICAD_VERSION_6_99, KICAD_VERSION_9_0_1)
+                         MISSING_TOOL, KICAD_VERSION_6_99, KICAD_VERSION_9_0_1, add_variant)
 from kiauto.interposer import (check_interposer, dump_interposer_dialog, start_queue, setup_interposer_filename,
                                create_interposer_print_options_file, wait_queue, wait_start_by_msg, wait_and_show_progress,
                                set_kicad_process, open_dialog_i, wait_kicad_ready_i, paste_bogus_filename, paste_text_i,
@@ -780,6 +780,7 @@ def export_vrml_cli(cfg):
         # User origin
         units = VRML_UNITS_2_KCLI[VRML_UNITS.index(cfg.ref_units_ori)]
         cmd.extend(['--user-origin', f'{cfg.ref_x}x{cfg.ref_y}{units}'])
+    add_variant(cmd, cfg)
     cmd.append(cfg.input_file)
     run_command(cmd)
 
@@ -1575,6 +1576,7 @@ if __name__ == '__main__':  # noqa: C901
     parser.add_argument('--wait_start', help='Timeout to pcbnew start ['+str(WAIT_START)+']', type=int, default=WAIT_START)
     parser.add_argument('--time_out_scale', help='Timeout multiplier, affects most timeouts',
                         type=float, default=TIME_OUT_MULT)
+    parser.add_argument('--variant', help='KiCad 10+ variant', type=str)
 
     # short commands: cflmMopsStv
     export_parser = subparsers.add_parser('export', help='Export PCB layers')
@@ -1735,6 +1737,7 @@ if __name__ == '__main__':  # noqa: C901
     cfg.layers = []
     cfg.save = args.command == 'run_drc' and args.save
     cfg.input_file = input_file
+    cfg.variant = args.variant
 
     # Get local versions for the GTK window names
     gettext.textdomain('gtk30')

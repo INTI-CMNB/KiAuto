@@ -103,6 +103,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_out_scale', help='Timeout multiplier, affects most timeouts',
                         type=float, default=TIME_OUT_MULT)
     parser.add_argument('--output-dir', '-d', nargs=1, help="output directory, only used when the name doesn't contain a path")
+    parser.add_argument('--variant', help='KiCad 10+ variant', type=str)
     args = parser.parse_args()
     log.set_level(logger, args.verbose)
     if args.output_dir is None:
@@ -145,6 +146,7 @@ if __name__ == '__main__':
         cmd.append('--min-distance='+args.min_distance[0])
     if args.subst_models and cfg.kicad_version_major > 5:
         cmd.append('--subst-models')
+    add_variant(cmd, args)
     cmd.append(args.pcb_filename)
     logger.debug("Command: "+str(cmd))
 
