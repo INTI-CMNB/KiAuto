@@ -31,7 +31,8 @@ logger = log.init()
 from kiauto.file_util import (get_log_files)
 from kiauto.ui_automation import (PopenContext, xdotool, wait_not_focused, wait_for_window, recorded_xvfb,
                                   wait_point, text_replace, set_time_out_scale, clipboard_retrieve, ShowInfoAction)
-from kiauto.misc import (REC_W, REC_H, __version__, WAIT_START, Config, __copyright__, __license__, TIME_OUT_MULT)
+from kiauto.misc import (REC_W, REC_H, __version__, WAIT_START, Config, __copyright__, __license__, TIME_OUT_MULT,
+                         add_variant)
 
 
 def run_gui_version(cmd, cfg, flog_out, flog_err):
