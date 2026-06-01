@@ -1,8 +1,8 @@
-kiauto (2.3.9-1) UNRELEASED; urgency=medium
+kiauto (2.3.9-1) stable; urgency=medium
 
   * Added KiCad 10 variants (not for 3D render)
 
- -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Fri, 29 May 2026 10:50:28 -0300
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Mon, 01 Jun 2026 09:31:37 -0300
 
 kiauto (2.3.8-1) stable; urgency=medium
 
