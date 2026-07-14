@@ -1,3 +1,9 @@
+kiauto (2.3.10-1) stable; urgency=medium
+
+  * Added warning about missing fonts in the schematic export
+
+ -- Salvador Eduardo Tropea <salvador@inti.gob.ar>  Tue, 14 Jul 2026 09:20:16 -0300
+
 kiauto (2.3.9-1) stable; urgency=medium
 
   * Added KiCad 10 variants (not for 3D render)
