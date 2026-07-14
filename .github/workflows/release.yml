@@ -82,4 +82,4 @@ jobs:
 
       - name: Trigger kicad_auto image build
         run: |
-          # curl -X POST -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" https://api.github.com/repos/INTI-CMNB/KiBot/dispatches --data '{"event_type": "refresh_images", "ref": "dev"}'
+          curl -X POST -u "${{secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" https://api.github.com/repos/INTI-CMNB/KiBot/dispatches --data '{"event_type": "refresh_images", "ref": "dev"}'
