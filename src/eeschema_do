@@ -260,6 +260,9 @@ def eeschema_plot_schematic_cli(cfg):
     add_variant(cmd, cfg)
     cmd.append(cfg.input_file)
     res = run_command(cmd)
+    # Look for messages about missing fonts
+    for match in re.finditer(r"Font '(.*)' not found; substituting '(.*)'", res):
+        logger.warning(f'Missing font `{match.group(1)}`, using `{match.group(2)}`')
     # KiCad bug: #20448 empty schematic without pages + #20453 that returns 0 on fail
     if 'No sheets to plot' in res and not cfg.all_pages and cfg.ki8:
         logger.warning('No pages printed, trying to print all')
